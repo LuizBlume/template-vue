@@ -1,60 +1,61 @@
 <script setup>
 import { reactive, onMounted } from 'vue'
-import { useCategoriaStore } from '@/stores/categoria'
+import { useAutorStore } from '@/stores/autor'
 
-const categoriaStore = useCategoriaStore()
+const autorStore = useAutorStore()
 
-const defaultCategoria = { id: null, descricao: '' }
-const categoria = reactive({ ...defaultCategoria })
+const defaultAutor = { id: null, descricao: '' }
+const autor = reactive({ ...defaultAutor })
 
 onMounted(async () => {
-  await categoriaStore.getCategorias()
+  await autorStore.getAutores()
 })
 
 function limpar() {
-  Object.assign(categoria, { ...defaultCategoria })
+  Object.assign(autor, { ...defaultAutor })
 }
 
 async function salvar() {
-  await categoriaStore.salvarCategoria({ ...categoria })
+  await autorStore.salvarAutor({ ...autor })
   limpar()
 }
 
-function editar(categoria_para_editar) {
-  Object.assign(categoria, categoria_para_editar)
+function editar(autor_para_editar) {
+  Object.assign(autor, autor_para_editar)
 }
 
 async function excluir(id) {
-  await categoriaStore.excluirCategoria(id)
+  await autorStore.excluirAutor(id)
   limpar()
 }
 </script>
 
 <template>
   <div class="container">
-    <h1>Categorias</h1>
+    <h1>Autores</h1>
     <div class="form">
-      <input type="text" v-model="categoria.descricao" placeholder="Descrição" />
+      <input type="text" v-model="autor.nome" placeholder="Nome" />
+      <input type="text" v-model="autor.email" placeholder="Email" />
       <button @click="salvar">Salvar</button>
       <button @click="limpar">Limpar</button>
     </div>
-    <ul class="categoria-list">
-      <li v-for="categoria in categoriaStore.categorias" :key="categoria.id">
-        <span @click="editar(categoria)"> ({{ categoria.id }}) - {{ categoria.descricao }} </span>
-        <button @click="excluir(categoria.id)">Excluir</button>
+    <ul class="autor-list">
+      <li v-for="autor in autorStore.autores" :key="autor.id">
+        <span @click="editar(autor)"> ({{ autor.nome }}) - {{ autor.email }} </span>
+        <button @click="excluir(autor.id)">Excluir</button>
       </li>
     </ul>
     <div class="paginator">
-      <button :disabled="categoriaStore.meta.page == 1" @click="categoriaStore.paginaAnterior">
+      <button :disabled="autorStore.meta.page == 1" @click="autorStore.paginaAnterior">
         Anterior
       </button>
       <button
-        :disabled="categoriaStore.meta.page == categoriaStore.meta.total_pages"
-        @click="categoriaStore.proximaPagina"
+        :disabled="autorStore.meta.page == autorStore.meta.total_pages"
+        @click="autorStore.proximaPagina"
       >
         Próxima
       </button>
-      <span>Página {{ categoriaStore.meta.page }} de {{ categoriaStore.meta.total_pages }}</span>
+      <span>Página {{ autorStore.meta.page }} de {{ autorStore.meta.total_pages }}</span>
     </div>
   </div>
 </template>
@@ -132,7 +133,7 @@ button:disabled:hover {
   cursor: not-allowed;
 }
 
-.categoria-list {
+.autor-list {
   list-style: none;
   padding: 0;
   margin: 0;
